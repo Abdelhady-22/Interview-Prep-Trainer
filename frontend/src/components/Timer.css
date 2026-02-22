@@ -1,0 +1,69 @@
+.timer-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.timer-display {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #818cf8;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.timer-digits {
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+.timer-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.timer-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    border-radius: 2px;
+    transition: width 1s linear;
+}
+
+/* Urgent: < 30 seconds */
+.timer-container.urgent .timer-display {
+    color: #fbbf24;
+}
+
+.timer-container.urgent .timer-bar-fill {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+/* Critical: < 10 seconds */
+.timer-container.critical .timer-display {
+    color: #f87171;
+    animation: timerPulse 0.5s ease-in-out infinite alternate;
+}
+
+.timer-container.critical .timer-bar-fill {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.timer-warn-icon {
+    animation: timerPulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes timerPulse {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0.5;
+    }
+}

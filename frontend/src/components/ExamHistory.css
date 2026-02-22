@@ -1,0 +1,232 @@
+.history-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.history-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #e2e8f0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+}
+
+.history-header h2 svg {
+    color: #818cf8;
+}
+
+.history-header p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.refresh-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    border-radius: 8px;
+    color: #818cf8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+    background: rgba(99, 102, 241, 0.2);
+}
+
+.history-loading,
+.history-error {
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+}
+
+.history-error {
+    color: #fca5a5;
+}
+
+.history-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(15, 15, 35, 0.5);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    border-radius: 16px;
+}
+
+.history-empty svg {
+    color: #475569;
+    margin-bottom: 1rem;
+}
+
+.history-empty h3 {
+    color: #94a3b8;
+    margin: 0 0 0.5rem;
+}
+
+.history-empty p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: rgba(15, 15, 35, 0.6);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    border-color: rgba(99, 102, 241, 0.25);
+    background: rgba(15, 15, 35, 0.8);
+}
+
+.item-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.item-topic {
+    color: #e2e8f0;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: capitalize;
+}
+
+.item-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.item-diff,
+.item-type,
+.item-questions {
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.item-diff {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+}
+
+.item-diff.diff-easy {
+    background: rgba(52, 211, 153, 0.15);
+    color: #6ee7b7;
+}
+
+.item-diff.diff-medium {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fcd34d;
+}
+
+.item-diff.diff-hard {
+    background: rgba(248, 113, 113, 0.15);
+    color: #fca5a5;
+}
+
+.item-type {
+    background: rgba(99, 102, 241, 0.1);
+    color: #94a3b8;
+}
+
+.item-category {
+    background: rgba(45, 212, 191, 0.15);
+    color: #5eead4;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.item-mode {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.item-questions {
+    background: rgba(99, 102, 241, 0.1);
+    color: #94a3b8;
+}
+
+.item-date {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #475569;
+    font-size: 0.78rem;
+}
+
+.item-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.item-grade {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.grade-pass {
+    color: #34d399;
+}
+
+.grade-fail {
+    color: #f87171;
+}
+
+.item-percentage {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.item-status {
+    font-size: 0.7rem;
+    color: #475569;
+    text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+    .history-page {
+        padding: 0 1rem;
+    }
+}
