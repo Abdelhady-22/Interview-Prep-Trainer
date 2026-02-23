@@ -23,6 +23,8 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    volumes:
+      - ./llm_logs:/app/llm_logs
     networks:
       - app-network
 
@@ -51,11 +53,11 @@ services:
     environment:
       - OLLAMA_MODEL=${OLLAMA_MODEL}
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:11434/api/tags || exit 1"]
+      test: ["CMD-SHELL", "ollama list > /dev/null 2>&1 || exit 1"]
       interval: 10s
       timeout: 30s
-      retries: 20
-      start_period: 300s
+      retries: 30
+      start_period: 600s
     networks:
       - app-network
 

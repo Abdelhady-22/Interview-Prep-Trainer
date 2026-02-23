@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.agents.crew import grading_crew
+from app.integrations.ollama_client import save_llm_response
 from app.integrations.ollama_client import ollama_client
 from app.repositories.submission_repository import SubmissionRepository
 from app.api.schemas import GradeRequest, QuestionType

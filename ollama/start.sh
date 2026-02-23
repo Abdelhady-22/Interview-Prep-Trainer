@@ -8,7 +8,7 @@ ollama serve &
 
 # Wait for Ollama to be ready
 echo "Waiting for Ollama server to start..."
-until curl -sf http://localhost:11434/api/tags > /dev/null 2>&1; do
+until ollama list > /dev/null 2>&1; do
     echo "  Ollama not ready yet, retrying in 2s..."
     sleep 2
 done

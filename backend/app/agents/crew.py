@@ -8,6 +8,7 @@ import re
 from crewai import Agent, Task, Crew, Process, LLM
 
 from app.config import settings
+from app.integrations.ollama_client import save_llm_response
 from app.agents.grader_agent import (
     GRADER_ROLE, GRADER_GOAL, GRADER_BACKSTORY,
     GRADER_TASK_DESCRIPTION, GRADER_EXPECTED_OUTPUT,
@@ -246,6 +247,7 @@ class GradingCrew:
         }
 
         # Parse grading result
+        save_llm_response(prefix="crew_grader", prompt="grading_task", response=str(grading_task.output))
         try:
             grading_data = _extract_json(str(grading_task.output))
             result["score"] = float(grading_data.get("score", 5.0))
@@ -256,6 +258,7 @@ class GradingCrew:
             logger.warning(f"Failed to parse grading output: {e}")
 
         # Parse feedback result
+        save_llm_response(prefix="crew_feedback", prompt="feedback_task", response=str(feedback_task.output))
         try:
             feedback_data = _extract_json(str(feedback_task.output))
             result["mistakes"] = feedback_data.get("mistakes", [])
@@ -266,6 +269,7 @@ class GradingCrew:
             logger.warning(f"Failed to parse feedback output: {e}")
 
         # Parse review result
+        save_llm_response(prefix="crew_review", prompt="review_task", response=str(review_task.output))
         try:
             review_data = _extract_json(str(review_task.output))
             result["encouragement"] = review_data.get("encouragement", "")
@@ -288,6 +292,7 @@ class GradingCrew:
             "encouragement": "",
         }
 
+        save_llm_response(prefix="crew_mcq_feedback", prompt="mcq_feedback_task", response=str(feedback_task.output))
         try:
             feedback_data = _extract_json(str(feedback_task.output))
             result["mistakes"] = feedback_data.get("mistakes", [])
@@ -297,6 +302,7 @@ class GradingCrew:
         except (json.JSONDecodeError, ValueError) as e:
             logger.warning(f"Failed to parse MCQ feedback: {e}")
 
+        save_llm_response(prefix="crew_mcq_review", prompt="mcq_review_task", response=str(review_task.output))
         try:
             review_data = _extract_json(str(review_task.output))
             result["encouragement"] = review_data.get("encouragement", "")
@@ -353,6 +359,7 @@ class GradingCrew:
         crew.kickoff()
 
         # Parse the result
+        save_llm_response(prefix="crew_question_gen", prompt=prompt, response=str(gen_task.output))
         try:
             data = _extract_json(str(gen_task.output))
             result = {
