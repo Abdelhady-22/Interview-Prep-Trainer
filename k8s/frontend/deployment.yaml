@@ -22,7 +22,7 @@ spec:
             - containerPort: 3000
           env:
             - name: VITE_API_URL
-              value: "http://BACKEND_EXTERNAL_IP:30800"
+              value: "http://104.248.137.93:30800"
           resources:
             requests:
               cpu: "100m"
