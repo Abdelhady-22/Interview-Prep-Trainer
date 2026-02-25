@@ -11,6 +11,31 @@ logger = logging.getLogger(__name__)
 LLM_LOG_DIR = os.environ.get("LLM_LOG_DIR", "/app/llm_logs")
 os.makedirs(LLM_LOG_DIR, exist_ok=True)
 
+# Common LLM noise patterns to strip before JSON parsing
+LLM_NOISE_PREFIXES = [
+    "my best complete final answer to the task.",
+    "Your final answer must be the great and the most complete as possible, it must be outcome described.",
+    "Here is my final answer:",
+    "Final Answer:",
+    "Here is the JSON:",
+]
+
+
+def strip_llm_noise(text: str) -> str:
+    """Strip common LLM boilerplate noise from responses before JSON parsing."""
+    cleaned = text.strip()
+    # Remove noise prefixes (case-insensitive)
+    for prefix in LLM_NOISE_PREFIXES:
+        if cleaned.lower().startswith(prefix.lower()):
+            cleaned = cleaned[len(prefix):].strip()
+    # Strip markdown code fences
+    if cleaned.startswith("```json"):
+        cleaned = cleaned[7:]
+    if cleaned.startswith("```"):
+        cleaned = cleaned[3:]
+    if cleaned.endswith("```"):
+        cleaned = cleaned[:-3]
+    return cleaned.strip()
 
 def save_llm_response(prefix: str, prompt: str, response: str, system: str = "", model: str = ""):
     """Save a raw LLM response to a timestamped file."""
@@ -41,7 +66,7 @@ class OllamaClient:
         self.base_url = settings.OLLAMA_BASE_URL
         self.timeout = 120.0  # 2 minutes for LLM generation
 
-    async def generate(self, prompt: str, system: str = "", model: str = None) -> str:
+    async def generate(self, prompt: str, system: str = "", model: str = None, temperature: float = 0.1) -> str:
         """
         Send a prompt to Ollama and return the generated text.
         Uses the /api/generate endpoint with stream=false.
@@ -51,6 +76,9 @@ class OllamaClient:
             "model": model,
             "prompt": prompt,
             "stream": False,
+            "options": {
+                "temperature": temperature,
+            },
         }
         if system:
             payload["system"] = system

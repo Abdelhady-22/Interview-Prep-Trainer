@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.agents.crew import grading_crew
-from app.integrations.ollama_client import save_llm_response
+from app.integrations.ollama_client import save_llm_response, strip_llm_noise
 from app.integrations.ollama_client import ollama_client
 from app.repositories.submission_repository import SubmissionRepository
 from app.api.schemas import GradeRequest, QuestionType
@@ -22,27 +22,15 @@ You must respond with ONLY a valid JSON object.
 No markdown. No explanation. No code blocks. No extra text.
 Just the raw JSON object and nothing else.
 
-The JSON must follow this exact schema:
-{
-  "score": float between 0.0 and 10.0,
-  "max_score": 10,
-  "grade_letter": one of "A" "B" "C" "D" "F",
-  "passed": boolean (true if score >= 5.0),
-  "mistakes": [ { "type": string, "description": string } ],
-  "strengths": [ string ],
-  "feedback": string (main summary, 1-2 sentences),
-  "recommendations": [
-    {
-      "topic": string,
-      "action": string,
-      "resource_type": one of "practice" "reading" "video" "exercise"
-    }
-  ],
-  "encouragement": string (warm, personal, 1 sentence)
-}
+Here is an example of a correct response:
+{"score": 7.5, "max_score": 10, "grade_letter": "B", "passed": true, "mistakes": [{"type": "incomplete", "description": "Missing explanation of time complexity"}], "strengths": ["Correct algorithm choice", "Clean code structure"], "feedback": "Good understanding of the core concept but missed some details.", "recommendations": [{"topic": "Algorithm Analysis", "action": "Practice analyzing time complexity of common algorithms", "resource_type": "practice"}], "encouragement": "Great work on the algorithm! A little more depth on complexity analysis will make your answers perfect."}
 
-If the student answer is perfect, mistakes should be an empty array.
-If no improvements needed, recommendations should be an empty array."""
+Rules:
+- "score": float between 0.0 and 10.0
+- "grade_letter": exactly one of A, B, C, D, F
+- "passed": true if score >= 5.0, false otherwise
+- If the answer is perfect, "mistakes" should be []
+- If no improvements needed, "recommendations" should be []"""
 
 SINGLE_PROMPT_USER = """Question: {question}
 Correct Answer: {correct_answer}
@@ -181,9 +169,12 @@ Student: {request.student_answer}"""
         """Parse LLM response into a valid grading result dict."""
         import re
 
+        # Strip LLM boilerplate noise first
+        cleaned = strip_llm_noise(raw)
+
         # Try code blocks first
-        code_block = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw, re.DOTALL)
-        text = code_block.group(1) if code_block else raw.strip()
+        code_block = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", cleaned, re.DOTALL)
+        text = code_block.group(1) if code_block else cleaned
 
         # Try to find JSON object
         json_match = re.search(r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", text, re.DOTALL)

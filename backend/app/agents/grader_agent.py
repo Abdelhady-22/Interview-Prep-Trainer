@@ -24,22 +24,24 @@ Question: {question}
 Correct Answer: {correct_answer}
 Student Answer: {student_answer}
 
-You must respond with ONLY a valid JSON object containing exactly these fields:
-{{
-    "score": <float between 0.0 and 10.0>,
-    "max_score": 10,
-    "grade_letter": "<one of A, B, C, D, F>",
-    "passed": <true if score >= 5.0, false otherwise>
-}}
-
 Grading scale:
-- A: 9.0 - 10.0 (Excellent, nearly perfect)
-- B: 7.0 - 8.9  (Good, minor gaps)
-- C: 5.0 - 6.9  (Adequate, significant gaps but shows understanding)
-- D: 3.0 - 4.9  (Poor, major gaps)
-- F: 0.0 - 2.9  (Failing, little to no understanding)
+- A: 9.0 - 10.0 (Excellent, nearly perfect, covers all key points)
+- B: 7.0 - 8.9  (Good, mostly correct with minor gaps)
+- C: 5.0 - 6.9  (Adequate, shows partial understanding but significant gaps)
+- D: 3.0 - 4.9  (Poor, major misunderstandings or missing key concepts)
+- F: 0.0 - 2.9  (Failing, wrong answer or no understanding shown)
 
-Return ONLY the JSON object. No markdown, no explanation, no code blocks.
+Here is an example of the exact JSON format you must return:
+{{"score": 7.5, "max_score": 10, "grade_letter": "B", "passed": true}}
+
+Another example for a failing answer:
+{{"score": 2.0, "max_score": 10, "grade_letter": "F", "passed": false}}
+
+Rules:
+- "passed" is true ONLY when score >= 5.0
+- "score" must be a number between 0.0 and 10.0
+- "grade_letter" must be exactly one of: A, B, C, D, F
+- Return ONLY the JSON object. No markdown, no explanation, no code blocks.
 """
 
 GRADER_EXPECTED_OUTPUT = (

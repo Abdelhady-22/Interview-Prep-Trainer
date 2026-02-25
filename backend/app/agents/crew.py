@@ -8,7 +8,7 @@ import re
 from crewai import Agent, Task, Crew, Process, LLM
 
 from app.config import settings
-from app.integrations.ollama_client import save_llm_response
+from app.integrations.ollama_client import save_llm_response, strip_llm_noise
 from app.agents.grader_agent import (
     GRADER_ROLE, GRADER_GOAL, GRADER_BACKSTORY,
     GRADER_TASK_DESCRIPTION, GRADER_EXPECTED_OUTPUT,
@@ -35,23 +35,27 @@ def _build_llm(model_override: str = None) -> LLM:
     return LLM(
         model=f"ollama/{model}",
         base_url=settings.OLLAMA_BASE_URL,
+        temperature=0.1,
     )
 
 
 def _extract_json(text: str) -> dict:
-    """Extract a JSON object from LLM text output, handling markdown fences."""
+    """Extract a JSON object from LLM text output, handling markdown fences and noise."""
+    # Strip common LLM boilerplate noise first
+    cleaned = strip_llm_noise(text)
+
     # Try to find JSON in code blocks first
-    code_block = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+    code_block = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", cleaned, re.DOTALL)
     if code_block:
         return json.loads(code_block.group(1))
 
     # Try to find raw JSON object
-    json_match = re.search(r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", text, re.DOTALL)
+    json_match = re.search(r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", cleaned, re.DOTALL)
     if json_match:
         return json.loads(json_match.group(0))
 
     # Last resort: try the whole text
-    return json.loads(text.strip())
+    return json.loads(cleaned)
 
 
 class GradingCrew:

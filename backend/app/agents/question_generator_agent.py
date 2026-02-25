@@ -35,9 +35,10 @@ Requirements:
 - For easy: simple logic (loops, conditions, basic operations)
 - For medium: data manipulation, standard algorithms, string processing
 - For hard: complex algorithms, optimization, advanced data structures
+- Make the question UNIQUE and SPECIFIC — do not ask generic questions
 
-You must respond with ONLY this JSON object:
-{{"question_text": "<describe what function to write, include expected input/output examples>", "correct_answer": "<complete working code solution>", "explanation": "<brief explanation of the approach, 1-2 sentences>"}}
+Here is an example of the EXACT JSON format you must return:
+{{"question_text": "Write a Python function called `is_palindrome(s)` that takes a string and returns True if it reads the same forwards and backwards (case-insensitive, ignoring spaces).", "correct_answer": "def is_palindrome(s):\\n    cleaned = s.lower().replace(' ', '')\\n    return cleaned == cleaned[::-1]", "explanation": "The function normalizes the string by lowering case and removing spaces, then compares it to its reverse."}}
 
 IMPORTANT: Do NOT repeat these previously asked questions:
 {previous_questions}
@@ -55,9 +56,10 @@ Requirements:
 - For easy: basic definitions, fundamental concepts
 - For medium: comparing concepts, explaining tradeoffs, how things work internally
 - For hard: deep technical knowledge, edge cases, advanced theory
+- Make the question SPECIFIC to {topic} — avoid generic questions
 
-You must respond with ONLY this JSON object:
-{{"question_text": "<the concept question>", "correct_answer": "<complete correct explanation>", "explanation": "<why this is the correct/complete answer, 1-2 sentences>"}}
+Here is an example of the EXACT JSON format you must return:
+{{"question_text": "Explain the difference between a stack and a queue. When would you use each one?", "correct_answer": "A stack follows Last-In-First-Out (LIFO) — the last element added is the first removed. A queue follows First-In-First-Out (FIFO) — the first element added is the first removed. Use a stack for undo operations, function call tracking, or DFS. Use a queue for task scheduling, BFS, or message processing.", "explanation": "This tests understanding of two fundamental data structures and their practical applications."}}
 
 IMPORTANT: Do NOT repeat these previously asked questions:
 {previous_questions}
@@ -77,8 +79,8 @@ Requirements:
 - For medium: logic errors, edge case bugs, incorrect algorithm
 - For hard: subtle bugs, race conditions, memory issues, complex logic errors
 
-You must respond with ONLY this JSON object:
-{{"question_text": "<describe the task, then show the buggy code and ask what is wrong and how to fix it>", "correct_answer": "<identify the bug and provide the corrected code>", "code_snippet": "<the buggy code by itself for display>", "explanation": "<what the bug was and why the fix works, 1-2 sentences>"}}
+Here is an example of the EXACT JSON format you must return:
+{{"question_text": "Find and fix the bug in this function that should return the sum of even numbers in a list:\\n\\ndef sum_evens(nums):\\n    total = 0\\n    for n in nums:\\n        if n % 2 == 1:\\n            total += n\\n    return total", "correct_answer": "The bug is in the condition: `n % 2 == 1` checks for odd numbers instead of even. Fix: change to `n % 2 == 0`.\\n\\ndef sum_evens(nums):\\n    total = 0\\n    for n in nums:\\n        if n % 2 == 0:\\n            total += n\\n    return total", "code_snippet": "def sum_evens(nums):\\n    total = 0\\n    for n in nums:\\n        if n % 2 == 1:\\n            total += n\\n    return total", "explanation": "The modulo check was inverted — checking for odd (remainder 1) instead of even (remainder 0)."}}
 
 IMPORTANT: Do NOT repeat these previously asked questions:
 {previous_questions}
@@ -97,8 +99,8 @@ Requirements:
 - For medium: design a small system, API design, database schema
 - For hard: large-scale system design, distributed systems, scalability
 
-You must respond with ONLY this JSON object:
-{{"question_text": "<the system design question>", "correct_answer": "<key components, data flow, and design decisions>", "explanation": "<what makes this a good design, 1-2 sentences>"}}
+Here is an example of the EXACT JSON format you must return:
+{{"question_text": "How would you design a URL shortener service like bit.ly?", "correct_answer": "Key components: 1) API server to accept long URLs and return short codes, 2) Database to store mappings (short_code -> long_url), 3) Base62 encoding of auto-increment ID for short codes, 4) 301 redirect on GET requests. For scale: add caching (Redis) for popular URLs, use a distributed ID generator, and add rate limiting.", "explanation": "This tests the ability to design a complete web service with storage, encoding, and scalability considerations."}}
 
 IMPORTANT: Do NOT repeat these previously asked questions:
 {previous_questions}
@@ -118,8 +120,8 @@ Requirements:
 - For medium: conflict resolution, technical disagreements, deadline pressure
 - For hard: leading a failing project, making difficult technical decisions, handling production incidents
 
-You must respond with ONLY this JSON object:
-{{"question_text": "<the behavioral question>", "correct_answer": "<what a strong answer should include: key points, STAR format expectations>", "explanation": "<what interviewers look for in this answer, 1-2 sentences>"}}
+Here is an example of the EXACT JSON format you must return:
+{{"question_text": "Tell me about a time when you had to debug a critical production issue under pressure. What was your approach?", "correct_answer": "A strong answer uses the STAR format: Situation (describe the incident), Task (your role and responsibility), Action (systematic debugging: check logs, reproduce, isolate, fix, verify), Result (resolution, postmortem, preventive measures). Key points: staying calm, communicating with stakeholders, prioritizing correctly.", "explanation": "This reveals how candidates handle stress, their debugging methodology, and communication skills during incidents."}}
 
 IMPORTANT: Do NOT repeat these previously asked questions:
 {previous_questions}
@@ -139,8 +141,8 @@ Requirements:
 - For medium: performance issues, code smells, SOLID violations
 - For hard: architectural issues, security vulnerabilities, subtle antipatterns
 
-You must respond with ONLY this JSON object:
-{{"question_text": "<present the code and ask the candidate to review it>", "correct_answer": "<list of issues found and suggested improvements>", "code_snippet": "<the code to review by itself for display>", "explanation": "<summary of the key issues, 1-2 sentences>"}}
+Here is an example of the EXACT JSON format you must return:
+{{"question_text": "Review this Python function and identify all issues:\\n\\ndef get_user(id):\\n    data = open('users.json').read()\\n    users = eval(data)\\n    for u in users:\\n        if u['id'] == id:\\n            return u\\n    return None", "correct_answer": "Issues: 1) Using eval() is a security vulnerability — use json.loads() instead, 2) File is never closed — use a `with` statement, 3) Parameter name `id` shadows the built-in, 4) No error handling for missing file or invalid JSON, 5) Linear search is inefficient for large datasets.", "code_snippet": "def get_user(id):\\n    data = open('users.json').read()\\n    users = eval(data)\\n    for u in users:\\n        if u['id'] == id:\\n            return u\\n    return None", "explanation": "This code has security (eval), resource management (file handle), naming, and performance issues."}}
 
 IMPORTANT: Do NOT repeat these previously asked questions:
 {previous_questions}
@@ -160,9 +162,12 @@ Requirements:
 - For easy: basic knowledge
 - For medium: applied understanding
 - For hard: deep expertise, edge cases
+- Make the question SPECIFIC and UNIQUE
 
-You must respond with ONLY this JSON object:
-{{"question_text": "<the interview question>", "options": {{"A": "<option A>", "B": "<option B>", "C": "<option C>", "D": "<option D>"}}, "correct_answer": "<A, B, C, or D>", "explanation": "<why the correct answer is right, 1-2 sentences>"}}
+Here is an example of the EXACT JSON format you must return:
+{{"question_text": "Which sorting algorithm has the best average-case time complexity?", "options": {{"A": "Bubble Sort - O(n²)", "B": "Merge Sort - O(n log n)", "C": "Selection Sort - O(n²)", "D": "Insertion Sort - O(n²)"}}, "correct_answer": "B", "explanation": "Merge Sort has O(n log n) average-case complexity, which is optimal for comparison-based sorting. The other options are all O(n²)."}}
+
+CRITICAL: The "correct_answer" field must be ONLY the letter: "A", "B", "C", or "D". NOT the text of the option.
 
 IMPORTANT: Do NOT repeat these previously asked questions:
 {previous_questions}
