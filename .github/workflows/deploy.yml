@@ -1,0 +1,66 @@
+name: Deploy to DOKS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "k8s/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Login to DOCR
+        run: doctl registry login --expiry-seconds 1800
+
+      - name: Build backend image
+        run: docker build -t registry.digitalocean.com/interview-prep/backend:${{ github.sha }} -t registry.digitalocean.com/interview-prep/backend:latest ./backend
+
+      - name: Build frontend image
+        run: docker build --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} -t registry.digitalocean.com/interview-prep/frontend:${{ github.sha }} -t registry.digitalocean.com/interview-prep/frontend:latest ./frontend
+
+      - name: Push backend image
+        run: |
+          docker push registry.digitalocean.com/interview-prep/backend:${{ github.sha }}
+          docker push registry.digitalocean.com/interview-prep/backend:latest
+
+      - name: Push frontend image
+        run: |
+          docker push registry.digitalocean.com/interview-prep/frontend:${{ github.sha }}
+          docker push registry.digitalocean.com/interview-prep/frontend:latest
+
+      - name: Save kubeconfig
+        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_ID }}
+
+      - name: Apply K8S manifests
+        run: |
+          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/secret.yaml
+          kubectl apply -f k8s/configmap.yaml
+          kubectl apply -f k8s/backend/
+          kubectl apply -f k8s/frontend/
+
+      - name: Restart deployments with new images
+        run: |
+          kubectl rollout restart deployment/backend -n interview-prep
+          kubectl rollout restart deployment/frontend -n interview-prep
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/backend -n interview-prep --timeout=120s
+          kubectl rollout status deployment/frontend -n interview-prep --timeout=120s
+
+      - name: Verify deployment
+        run: |
+          kubectl get pods -n interview-prep
+          kubectl get svc -n interview-prep
