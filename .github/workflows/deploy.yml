@@ -7,6 +7,7 @@ on:
       - "backend/**"
       - "frontend/**"
       - "k8s/**"
+      - ".github/**"
 
 jobs:
   deploy:
@@ -27,7 +28,7 @@ jobs:
         run: docker build -t registry.digitalocean.com/interview-prep/backend:${{ github.sha }} -t registry.digitalocean.com/interview-prep/backend:latest ./backend
 
       - name: Build frontend image
-        run: docker build --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} -t registry.digitalocean.com/interview-prep/frontend:${{ github.sha }} -t registry.digitalocean.com/interview-prep/frontend:latest ./frontend
+        run: docker build --build-arg "VITE_API_URL=${{ secrets.VITE_API_URL }}" -t registry.digitalocean.com/interview-prep/frontend:${{ github.sha }} -t registry.digitalocean.com/interview-prep/frontend:latest ./frontend
 
       - name: Push backend image
         run: |
