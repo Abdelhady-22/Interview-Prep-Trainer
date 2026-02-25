@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: interview-prep
+data:
+  OLLAMA_BASE_URL: "http://164.92.183.143:11434"
+  OLLAMA_MODEL: "qwen2.5:0.5b"
+  MAX_RETRIES: "3"
+  GRADING_MODE: "single"
+  CREWAI_VERBOSE: "false"
+  DEFAULT_EXAM_QUESTIONS: "5"
