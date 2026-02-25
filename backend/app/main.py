@@ -1,6 +1,7 @@
 """
 FastAPI Application Entry Point.
 Sets up CORS, includes routes, initializes DB on startup.
+v1.1.0 — CI/CD enabled, improved prompts.
 """
 import logging
 from fastapi import FastAPI
