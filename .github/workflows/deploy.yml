@@ -58,8 +58,8 @@ jobs:
 
       - name: Wait for rollout
         run: |
-          kubectl rollout status deployment/backend -n interview-prep --timeout=120s
-          kubectl rollout status deployment/frontend -n interview-prep --timeout=120s
+          kubectl rollout status deployment/backend -n interview-prep --timeout=180s
+          kubectl rollout status deployment/frontend -n interview-prep --timeout=180s
 
       - name: Verify deployment
         run: |
