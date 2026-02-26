@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.agents.crew import grading_crew
 from app.agents.question_generator_agent import get_prompt
-from app.integrations.ollama_client import ollama_client
+from app.integrations.ollama_client import ollama_client, strip_llm_noise
 from app.repositories.question_repository import QuestionRepository
 from app.config import settings
 
@@ -56,6 +56,14 @@ class QuestionService:
             logger.warning(f"CrewAI question generation failed, using fallback: {e}")
             data = await self._fallback_generate(topic, difficulty, question_type, category, prev)
 
+        # Normalize options (LLM sometimes returns list instead of dict)
+        options = data.get("options")
+        if isinstance(options, list):
+            letters = ["A", "B", "C", "D"]
+            options = {letters[i]: opt for i, opt in enumerate(options) if i < 4}
+        if isinstance(options, dict) and len(options) == 0:
+            options = None
+
         # Save to DB
         db_data = {
             "topic": topic,
@@ -65,7 +73,7 @@ class QuestionService:
             "question_text": data["question_text"],
             "correct_answer": data["correct_answer"],
             "explanation": data.get("explanation", ""),
-            "options": data.get("options"),
+            "options": options,
         }
         question = self.repo.create(db_data)
 
@@ -78,7 +86,7 @@ class QuestionService:
             "question_text": data["question_text"],
             "correct_answer": data["correct_answer"],
             "explanation": data.get("explanation", ""),
-            "options": data.get("options"),
+            "options": options,
             "code_snippet": data.get("code_snippet"),
         }
 
@@ -116,9 +124,10 @@ class QuestionService:
 
 def _extract_json(raw: str) -> dict:
     """Extract JSON from LLM output, handling markdown code blocks and extra text."""
+    cleaned = strip_llm_noise(raw)
     # Try code blocks first
-    code_block = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw, re.DOTALL)
-    text = code_block.group(1) if code_block else raw.strip()
+    code_block = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", cleaned, re.DOTALL)
+    text = code_block.group(1) if code_block else cleaned
     # Find the JSON object
     json_match = re.search(r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", text, re.DOTALL)
     if json_match:

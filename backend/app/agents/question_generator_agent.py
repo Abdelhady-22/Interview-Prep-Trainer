@@ -154,20 +154,16 @@ Return ONLY the JSON object. No markdown. No code blocks. No extra text.""",
 MCQ_WRAPPER = """Generate a {difficulty} difficulty MULTIPLE CHOICE question about {topic}.
 Category: {category}
 
-The question should test the candidate's knowledge in an interview setting.
-
-Requirements:
-- All 4 options should be plausible (no obviously wrong answers)
+CRITICAL RULES:
+- The question MUST be specifically about {topic}. Do NOT ask about unrelated topics.
+- All 4 options must be plausible (no obviously wrong answers)
 - Only one option should be the best/correct answer
-- For easy: basic knowledge
-- For medium: applied understanding
-- For hard: deep expertise, edge cases
-- Make the question SPECIFIC and UNIQUE
+- "correct_answer" MUST be ONLY the letter: "A", "B", "C", or "D"
+- "options" MUST be a JSON object with keys "A", "B", "C", "D"
+- DO NOT copy the example below — create a NEW question about {topic}
 
-Here is an example of the EXACT JSON format you must return:
-{{"question_text": "Which sorting algorithm has the best average-case time complexity?", "options": {{"A": "Bubble Sort - O(n²)", "B": "Merge Sort - O(n log n)", "C": "Selection Sort - O(n²)", "D": "Insertion Sort - O(n²)"}}, "correct_answer": "B", "explanation": "Merge Sort has O(n log n) average-case complexity, which is optimal for comparison-based sorting. The other options are all O(n²)."}}
-
-CRITICAL: The "correct_answer" field must be ONLY the letter: "A", "B", "C", or "D". NOT the text of the option.
+JSON format (DO NOT COPY THIS — create your own about {topic}):
+{{"question_text": "<your question about {topic}>", "options": {{"A": "<option>", "B": "<option>", "C": "<option>", "D": "<option>"}}, "correct_answer": "<A or B or C or D>", "explanation": "<why correct answer is right>"}}
 
 IMPORTANT: Do NOT repeat these previously asked questions:
 {previous_questions}

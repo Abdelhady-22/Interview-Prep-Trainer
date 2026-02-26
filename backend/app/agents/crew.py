@@ -372,7 +372,12 @@ class GradingCrew:
                 "explanation": data.get("explanation", ""),
             }
             if question_type == "multiple_choice":
-                result["options"] = data.get("options", {})
+                options = data.get("options", {})
+                # Normalize list to dict if needed
+                if isinstance(options, list):
+                    letters = ["A", "B", "C", "D"]
+                    options = {letters[i]: opt for i, opt in enumerate(options) if i < 4}
+                result["options"] = options
             if data.get("code_snippet"):
                 result["code_snippet"] = data["code_snippet"]
             return result
